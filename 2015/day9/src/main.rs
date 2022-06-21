@@ -1,9 +1,9 @@
 use std::{
-    collections::{HashMap, HashSet},
+    collections::{hash_map::Keys, HashMap, HashSet},
     fs,
 };
 
-// Not sure how to safe DFS calculations without a global variable :(
+// Not sure how to save DFS calculations without a global variable :(
 static mut SHORTEST_ROUTE_COST: u32 = 0;
 static mut LONGEST_ROUTE_COST: u32 = 0;
 
@@ -51,7 +51,7 @@ fn dfs<'a>(
         path.remove(node);
         return;
     }
-    let edges = graph.edges_from(node);
+    let edges = graph.edges_from(node).unwrap();
     for edge in edges {
         dfs(
             graph,
@@ -90,16 +90,12 @@ impl<'a> Graph<'a> {
         edges.push(Edge::new(node1, dist));
     }
 
-    fn get_nodes(&self) -> Vec<&'a str> {
-        let mut nodes = Vec::new();
-        for k in self.graph.keys() {
-            nodes.push(*k);
-        }
-        nodes
+    fn get_nodes(&self) -> Keys<'a, &str, Vec<Edge<'a>>> {
+        self.graph.keys()
     }
 
-    fn edges_from(&self, node: &str) -> &Vec<Edge> {
-        self.graph.get(node).unwrap()
+    fn edges_from(&self, node: &str) -> Option<&Vec<Edge>> {
+        self.graph.get(node)
     }
 }
 
